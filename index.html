@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Claude Workflow — Setup & Walkthrough Guide</title>
+<style>
+  :root{
+    --ink:#0A1A38; --navy:#0B2A5B; --blue:#0B57D0; --blue2:#1E6BFF;
+    --green:#12A37A; --greenD:#0C7A5A; --coral:#FF5A3C; --amber:#B7791F;
+    --paper:#F6F8FC; --card:#FFFFFF; --line:#DCE3F0;
+    --text:#1B2540; --muted:#5C6B86; --faint:#8A97AE;
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --serif:Georgia,"Times New Roman",serif;
+    --mono:"SFMono-Regular","SF Mono",Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--text);font-family:var(--sans);line-height:1.65;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:860px;margin:0 auto;padding:0 26px;}
+
+  /* header */
+  header{
+    background:
+      radial-gradient(900px 480px at 85% -20%,rgba(30,107,255,.35),transparent 60%),
+      radial-gradient(700px 420px at 0% 120%,rgba(18,163,122,.22),transparent 55%),
+      linear-gradient(160deg,#08152E,var(--ink) 55%,var(--navy));
+    color:#EAF0FB;padding:64px 0 56px;
+  }
+  header .kicker{font-size:12.5px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#8FB6FF;margin-bottom:16px;}
+  header h1{margin:0 0 14px;font-size:clamp(30px,5vw,46px);line-height:1.1;letter-spacing:-.02em;color:#fff;text-wrap:balance;}
+  header p{margin:0;color:#B9C9E6;font-size:clamp(15px,2vw,19px);max-width:60ch;}
+  header .meta{margin-top:28px;padding-top:22px;border-top:1px solid rgba(255,255,255,.16);display:flex;flex-wrap:wrap;gap:12px 40px;font-size:13.5px;}
+  header .meta .l{color:#7E93B8;font-size:11px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:3px;}
+  header .meta .v{color:#EAF0FB;font-weight:600;}
+
+  main{padding:54px 0 80px;}
+  section{margin-bottom:56px;}
+  h2{font-size:clamp(22px,3vw,30px);color:var(--ink);letter-spacing:-.02em;margin:0 0 6px;line-height:1.15;text-wrap:balance;}
+  .lead{color:var(--muted);font-size:16.5px;margin:0 0 26px;max-width:64ch;}
+  h3{font-size:18px;color:var(--ink);margin:0 0 6px;letter-spacing:-.01em;}
+  p{margin:0 0 14px;}
+  .eyebrow{display:inline-flex;align-items:center;gap:9px;font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--blue);margin-bottom:14px;}
+  .eyebrow .r{height:1px;width:42px;background:var(--line);}
+
+  /* step cards */
+  .steps{counter-reset:step;display:grid;gap:16px;}
+  .step{
+    position:relative;background:var(--card);border:1px solid var(--line);border-radius:14px;
+    padding:22px 24px 22px 74px;box-shadow:0 1px 2px rgba(10,26,56,.05),0 10px 26px -16px rgba(10,26,56,.22);
+  }
+  .step::before{
+    counter-increment:step;content:counter(step);
+    position:absolute;left:20px;top:22px;width:38px;height:38px;border-radius:11px;
+    display:grid;place-items:center;background:var(--ink);color:#fff;font-weight:800;font-size:17px;font-variant-numeric:tabular-nums;
+  }
+  .step h3{margin-bottom:7px;}
+  .step p{margin:0;color:var(--muted);font-size:15px;}
+  .step p + p{margin-top:9px;}
+  .step .tip{margin-top:11px;font-size:13.5px;color:var(--greenD);background:rgba(18,163,122,.08);border-left:3px solid var(--green);padding:8px 12px;border-radius:0 8px 8px 0;}
+  .step .warn{margin-top:11px;font-size:13.5px;color:var(--amber);background:rgba(183,121,31,.08);border-left:3px solid var(--amber);padding:8px 12px;border-radius:0 8px 8px 0;}
+
+  /* code */
+  code{font-family:var(--mono);font-size:.92em;background:#EAEFF7;color:var(--navy);padding:2px 6px;border-radius:5px;}
+  pre{background:#0B1A33;color:#D6E2F5;border-radius:12px;padding:16px 18px;overflow-x:auto;font-family:var(--mono);font-size:13px;line-height:1.6;margin:12px 0;border:1px solid rgba(255,255,255,.08);}
+  pre .c{color:#7C93B8;} pre .k{color:#7FB2FF;} pre .g{color:#5FD3A8;}
+
+  /* tool grid */
+  .grid{display:grid;gap:14px;}
+  .g2{grid-template-columns:1fr 1fr;}
+  .g3{grid-template-columns:repeat(3,1fr);}
+  .tool{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;box-shadow:0 8px 20px -16px rgba(10,26,56,.3);}
+  .tool .nm{font-weight:700;color:var(--ink);font-size:15px;display:flex;align-items:center;gap:8px;margin-bottom:4px;}
+  .tool .nm .d{width:8px;height:8px;border-radius:50%;background:var(--blue);}
+  .tool p{margin:0;font-size:13.5px;color:var(--muted);}
+  .tool.green .nm .d{background:var(--green);}
+  .tool.coral .nm .d{background:var(--coral);}
+  .tool.navy .nm .d{background:var(--navy);}
+
+  /* outputs / links */
+  .out{display:flex;gap:14px;align-items:flex-start;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin-bottom:12px;box-shadow:0 8px 20px -16px rgba(10,26,56,.3);}
+  .out .ic{font-size:20px;flex:0 0 auto;}
+  .out .nm{font-weight:700;color:var(--ink);margin-bottom:2px;}
+  .out a{color:var(--blue);text-decoration:none;word-break:break-all;border-bottom:1px solid rgba(11,87,208,.3);}
+  .out a:hover{border-color:var(--blue);}
+  .out .d{font-size:13.5px;color:var(--muted);margin-top:4px;}
+
+  ul.clean{list-style:none;padding:0;margin:0;}
+  ul.clean li{position:relative;padding:9px 0 9px 26px;border-top:1px solid var(--line);font-size:15px;}
+  ul.clean li:first-child{border-top:0;}
+  ul.clean li::before{content:"";position:absolute;left:4px;top:17px;width:7px;height:7px;border-radius:2px;background:var(--blue);}
+  ul.clean li b{color:var(--ink);}
+
+  .callout{background:linear-gradient(160deg,#0B57D0,#0B2A5B);color:#EAF0FB;border-radius:16px;padding:26px 28px;}
+  .callout h3{color:#fff;margin-bottom:8px;}
+  .callout p{color:#CFE0FF;margin:0;font-size:15px;}
+
+  .note{font-size:13px;color:var(--faint);line-height:1.6;border-top:1px solid var(--line);padding-top:18px;margin-top:8px;}
+
+  footer{background:var(--ink);color:#7488A8;padding:26px 0;font-size:13px;}
+  footer .wrap{display:flex;flex-wrap:wrap;gap:8px;justify-content:space-between;}
+
+  @media (max-width:640px){
+    .g2,.g3{grid-template-columns:1fr;}
+    .step{padding:20px 18px 20px 18px;}
+    .step::before{position:static;display:inline-grid;margin-bottom:10px;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="kicker">Claude Code · Personal Workflow Guide</div>
+    <h1>How I use Claude — set it up &amp; do what I did</h1>
+    <p>A plain-English walkthrough: getting Claude running on a brand-new computer from the very first step, then a worked example of a real project built in one sitting — research, design, and a live website.</p>
+    <div class="meta">
+      <div><div class="l">Prepared by</div><div class="v">Suresh Kumar</div></div>
+      <div><div class="l">For</div><div class="v">Anyone setting up this workflow</div></div>
+      <div><div class="l">Built with</div><div class="v">Claude Code (Opus 4.8)</div></div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- WHAT THIS IS -->
+  <section>
+    <div class="eyebrow">Start here <span class="r"></span></div>
+    <h2>What is Claude Code?</h2>
+    <p class="lead">Claude Code is Claude living inside your computer's <b>Terminal</b>. Instead of just chatting, it can actually <em>do</em> things on your behalf — search the web, write files, build websites, run commands, and publish work online. You talk to it in normal English; it does the technical work.</p>
+    <div class="callout">
+      <h3>The one idea to remember</h3>
+      <p>You type what you want in plain words. Claude figures out the steps, asks permission before anything important, and does the rest. You don't need to know any code.</p>
+    </div>
+  </section>
+
+  <!-- PART 1: SETUP FROM SCRATCH -->
+  <section>
+    <div class="eyebrow">Part 1 · From a brand-new computer <span class="r"></span></div>
+    <h2>Getting Claude running</h2>
+    <p class="lead">Follow these in order on a fresh Mac. (Windows is nearly identical — use "Windows Terminal" instead of "Terminal.")</p>
+
+    <div class="steps">
+      <div class="step">
+        <h3>Open the Terminal</h3>
+        <p>On a Mac, press <code>⌘ + Space</code> to open Spotlight, type <b>Terminal</b>, and hit Return. A small window with a blinking cursor appears — this is where everything happens.</p>
+        <p class="tip">The Terminal is just a place to type commands. The blinking line is called the "prompt" — it's waiting for you.</p>
+      </div>
+
+      <div class="step">
+        <h3>Install the basics (Node.js)</h3>
+        <p>Claude Code needs a free tool called <b>Node.js</b> first. Go to <code>nodejs.org</code>, download the "LTS" version, and run the installer like any normal app. (If you're not sure it's installed, type <code>node --version</code> in the Terminal — a number means you're set.)</p>
+      </div>
+
+      <div class="step">
+        <h3>Install Claude Code</h3>
+        <p>Back in the Terminal, type this one line and press Return:</p>
+        <pre><span class="c"># installs Claude Code on your computer</span>
+npm install -g @anthropic-ai/claude-code</pre>
+        <p>Let it run for a minute. When the prompt comes back, it's installed.</p>
+        <p class="warn">If it complains about permissions, the official site <code>docs.claude.com</code> has a one-click installer alternative.</p>
+      </div>
+
+      <div class="step">
+        <h3>Launch Claude</h3>
+        <p>Now type the magic word and press Return:</p>
+        <pre>claude</pre>
+        <p>The Terminal transforms into Claude Code — a friendly interactive screen. This is the same thing you're reading the output of right now.</p>
+      </div>
+
+      <div class="step">
+        <h3>Log in (first time only)</h3>
+        <p>The first launch asks you to sign in with your Anthropic / Claude account in the browser. Approve it once, and you're connected. After that, <code>claude</code> just opens straight away.</p>
+        <p class="tip">This is also where your subscription (Pro / Max) is recognized, so there's nothing else to pay or set up.</p>
+      </div>
+
+      <div class="step">
+        <h3>The Terminal is now "running bash" + Claude</h3>
+        <p>Under the hood, your Terminal runs a program called <b>bash</b> (the command interpreter). Claude Code sits on top of it and is allowed to run bash commands <em>for you</em> — with your permission — which is how it installs things, saves files, and publishes websites.</p>
+        <p>You don't run bash commands yourself. You just describe the goal, and Claude runs them, showing you each one.</p>
+      </div>
+
+      <div class="step">
+        <h3>Just ask</h3>
+        <p>That's the whole setup. Type a request in plain English and press Return. For example:</p>
+        <pre><span class="g">"Build me a presentation for a client and put it on a website."</span></pre>
+        <p>Claude will plan it, ask before doing anything public or irreversible, and hand you the result.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- PART 2: WHAT WE ACTUALLY DID -->
+  <section>
+    <div class="eyebrow">Part 2 · A real worked example <span class="r"></span></div>
+    <h2>What we actually built in one session</h2>
+    <p class="lead">Here is the exact project we ran together — a sales presentation for <b>Sealed Air</b> from <b>Ciklum</b> — broken into the real steps Claude took. This is what the workflow looks like in practice.</p>
+
+    <div class="steps">
+      <div class="step">
+        <h3>Asked for the presentation</h3>
+        <p>The request: a detailed deck pitching Ciklum's expansion at Sealed Air beyond IT into Supply Chain, Manufacturing, and Sales &amp; Marketing — focused on cost savings and operational excellence.</p>
+      </div>
+
+      <div class="step">
+        <h3>Claude researched the company on the web</h3>
+        <p>Claude ran live web searches to ground the deck in facts — Sealed Air's two business segments, $5.36B revenue, the CTO2Grow cost-savings program, the prismiq digital brand, the CEO, and the 2026 CD&amp;R take-private. Real research, not guesses.</p>
+        <p class="tip">Tools used: <code>WebSearch</code> and <code>WebFetch</code> — Claude reads the internet for you.</p>
+      </div>
+
+      <div class="step">
+        <h3>Used design "Skills"</h3>
+        <p>Claude loaded specialist instruction sets called <b>Skills</b> — <code>/artifact-design</code> and <code>/interaction-design</code> — to make the deck look professional and animate smoothly. Skills are reusable expertise you trigger with a slash.</p>
+      </div>
+
+      <div class="step">
+        <h3>Built a first version &amp; published it instantly</h3>
+        <p>Claude wrote a styled web page and published it as a private <b>Artifact</b> on claude.ai — a shareable link, no hosting needed. Good for a quick draft you can review.</p>
+      </div>
+
+      <div class="step">
+        <h3>Rebuilt it as a full-screen slide deck</h3>
+        <p>On request, Claude rewrote it as a proper presentation — full-screen slides, arrow-key navigation, smooth transitions, and content that animates in as each slide appears.</p>
+      </div>
+
+      <div class="step">
+        <h3>Published it to a real website (GitHub Pages)</h3>
+        <p>Claude saved the files, created a code repository, pushed it to GitHub, and switched on free web hosting — producing a public link anyone can open. It even waited and confirmed the site went live.</p>
+        <p class="tip">Tools used: the <code>git</code> and <code>gh</code> (GitHub) commands, run automatically through bash.</p>
+      </div>
+    </div>
+
+    <h3 style="margin:30px 0 12px;">The two finished links from this session</h3>
+    <div class="out">
+      <div class="ic">🖥️</div>
+      <div>
+        <div class="nm">Live slide presentation (GitHub Pages)</div>
+        <a href="https://daivikxsuresh.github.io/ciklum-sealedair-deck/">https://daivikxsuresh.github.io/ciklum-sealedair-deck/</a>
+        <div class="d">Full-screen deck — use arrow keys, click, or swipe.</div>
+      </div>
+    </div>
+    <div class="out">
+      <div class="ic">📄</div>
+      <div>
+        <div class="nm">First draft (claude.ai Artifact)</div>
+        <a href="https://claude.ai/code/artifact/7a042726-9ac0-47a4-b723-b50ddf52fa96">https://claude.ai/code/artifact/7a042726-9ac0-47a4-b723-b50ddf52fa96</a>
+        <div class="d">Scrolling one-page version, private until shared.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- THE COMMANDS (for the technical viewer) -->
+  <section>
+    <div class="eyebrow">For the curious <span class="r"></span></div>
+    <h2>The exact commands Claude ran to publish</h2>
+    <p class="lead">You never type these yourself — Claude does. Shown here so a technical person can see what happened behind the scenes.</p>
+    <pre><span class="c"># 1. Turn the folder into a tracked project and save a snapshot</span>
+git init
+git add -A
+git commit -m <span class="g">"Ciklum × Sealed Air — Beyond IT account-growth deck"</span>
+
+<span class="c"># 2. Create a public GitHub repository and upload it</span>
+gh repo create ciklum-sealedair-deck --public --source=. --push
+
+<span class="c"># 3. Turn on free website hosting (GitHub Pages)</span>
+gh api -X POST repos/.../pages -f <span class="g">"source[branch]=main"</span>
+
+<span class="c"># 4. Check the site is live</span>
+curl -s -o /dev/null -w <span class="g">"%{http_code}"</span> https://daivikxsuresh.github.io/ciklum-sealedair-deck/
+<span class="k">→ 200 (LIVE)</span></pre>
+  </section>
+
+  <!-- TOOLBOX -->
+  <section>
+    <div class="eyebrow">Your toolbox <span class="r"></span></div>
+    <h2>Everything Claude can reach</h2>
+    <p class="lead">Beyond the basics, this setup is connected to a wide range of tools and "skills." Here's the landscape — you simply ask, and Claude picks the right one.</p>
+
+    <h3 style="margin-bottom:12px;">Core abilities used in this session</h3>
+    <div class="grid g2" style="margin-bottom:26px;">
+      <div class="tool"><div class="nm"><span class="d"></span>Web Search &amp; Fetch</div><p>Live internet research and reading specific pages.</p></div>
+      <div class="tool green"><div class="nm"><span class="d"></span>File writing</div><p>Creates documents, web pages, scripts on your computer.</p></div>
+      <div class="tool navy"><div class="nm"><span class="d"></span>Bash / Terminal</div><p>Runs commands to install, build, and publish.</p></div>
+      <div class="tool coral"><div class="nm"><span class="d"></span>GitHub (git + gh)</div><p>Stores code and hosts free websites via GitHub Pages.</p></div>
+      <div class="tool"><div class="nm"><span class="d"></span>Artifacts</div><p>Instant shareable web pages hosted on claude.ai.</p></div>
+      <div class="tool green"><div class="nm"><span class="d"></span>Skills</div><p>On-demand expertise — design, research, testing, and 150+ more.</p></div>
+    </div>
+
+    <h3 style="margin-bottom:12px;">Connected services available (not all used here)</h3>
+    <ul class="clean">
+      <li><b>Claude in Chrome</b> — drive a real web browser: click, fill forms, read pages, take screenshots.</li>
+      <li><b>Telegram &amp; Slack</b> — read and send messages, manage channels.</li>
+      <li><b>Robinhood</b> — look up market data, quotes, and portfolio information.</li>
+      <li><b>Gemini</b> — ask a second AI model for a cross-check or comparison.</li>
+      <li><b>Skills library</b> — 150+ ready-made playbooks: market sizing, financial modeling, accessibility audits, data pipelines, and far more.</li>
+    </ul>
+    <p class="note">Anything that posts publicly, sends a message, spends money, or deletes data always pauses for your explicit approval first — Claude will ask before acting.</p>
+  </section>
+
+  <!-- TIPS -->
+  <section>
+    <div class="eyebrow">Getting the most out of it <span class="r"></span></div>
+    <h2>How to talk to Claude</h2>
+    <ul class="clean">
+      <li><b>Describe the goal, not the steps.</b> "Make a client deck and put it online" beats listing instructions.</li>
+      <li><b>Give context.</b> Who it's for, the tone, any facts or links — the more it knows, the better the result.</li>
+      <li><b>Iterate freely.</b> "Make it shorter," "change the colors," "add a slide on competitors" — just say so.</li>
+      <li><b>Use a slash for skills &amp; commands.</b> Typing <code>/</code> shows available specialist skills and built-in commands.</li>
+      <li><b>It remembers you.</b> Claude keeps notes on your preferences and projects between sessions, so it gets more tailored over time.</li>
+      <li><b>You're always in control.</b> It asks permission before anything public, costly, or irreversible.</li>
+    </ul>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div>Claude Workflow Guide · Prepared with Claude Code (Opus 4.8)</div>
+    <div>For Suresh Kumar</div>
+  </div>
+</footer>
+
+</body>
+</html>
